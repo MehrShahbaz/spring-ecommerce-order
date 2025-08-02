@@ -9,6 +9,11 @@
 - [x] `PUT /api/admin/products/:id` update the whole product by ID
 - [x] `PATCH /api/admin/products/:id` update one or more attributes of Product by ID
 - [x] `DELETE /api/admin/products/:id` delete the product by ID
+- [x] `GET /api/admin/products/:id/options` get all product options
+- [x] `POST /api/admin/products/:id/options` Create a product option
+- [x] `PUT /api/admin/products/:id/options/:id` Update a option
+- [x] `PATCH /api/admin/products/:id/options/:id` Update a one or more attributes of Option by ID
+- [x] `DELETE /api/admin/products/:id/options/:id` delete the option by ID
 #### AdminAuthController
 - [x] `POST /api/admin/auth/signIn`
 #### Product Option
@@ -35,8 +40,16 @@
 - [x] `DELETE /api/member/cart/clear` clear entire cart
 
 ## Config
-### AuthInterceptor
-### LoginMemberArgumentResolver
+- [x] DotenvConfig
+- [x] WebConfig
+### Advice
+- [x] GlobalAdvice
+### ArgumentResolver
+- [x] LoginMemberArgumentResolver
+### Interceptor
+- [x] AdminInterceptor
+- [x] BaseAuthInterceptor
+- [x] MemberInterceptor
 ### WebConfig
 
 ## Service
