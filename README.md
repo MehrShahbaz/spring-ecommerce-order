@@ -223,3 +223,16 @@
 ### Service
 - [x] MemberAuthServiceTest
 - [x] ProductServiceTest
+
+## Environment Variables
+
+To run the application, create a `.env` file in the root directory based on the provided `.env.sample` file.
+
+The following variables are required:
+
+```env
+JWT_SECRET=       # Secret key used for signing JWT tokens
+JWT_TIME=         # Token expiration time (e.g., 3600s or 1h)
+DB_USER_NAME=     # Database username
+DB_PASSWORD=      # Database password
+
