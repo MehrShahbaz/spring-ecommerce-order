@@ -8,8 +8,6 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 
 @Entity
@@ -24,9 +22,6 @@ class User(
     @Column(name = "role", nullable = false)
     @Enumerated(EnumType.STRING)
     var role: UserRole = UserRole.USER,
-    @OneToOne
-    @JoinColumn(name = "cart_id")
-    var cart: Cart? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,

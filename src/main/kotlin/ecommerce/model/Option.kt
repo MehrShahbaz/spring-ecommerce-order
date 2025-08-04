@@ -35,6 +35,6 @@ class Option(
         private const val MIN_QUANTITY = 1
         private const val MAX_QUANTITY = 100_000_000
         private val NAME_PATTERN = Regex("^[a-zA-Z0-9 ()\\[\\]+\\-&/_]+$")
-        private val URL_PATTERN = Regex("^https?://.*\\.(png|jpg|jpeg|gif|webp)$")
+        private val URL_PATTERN = Regex("^https?://.*")
     }
 }

@@ -21,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest
 @Transactional
 class ProductServiceTest {
     @Autowired
@@ -62,11 +62,11 @@ class ProductServiceTest {
         val uri =
             adminProductService.createProduct(
                 ProductDTO(
-                    name = "test",
-                    optionsList =
-                        mutableListOf(
-                            OptionDTO("Option 1", 10.0, 5, "https://example.com/test.png"),
-                        ),
+                    "test",
+                    "http://localhost:8080/image/upload/product1.jpg",
+                    mutableListOf(
+                        OptionDTO("Option 1", 10.0, 5, "https://example.com/test.png"),
+                    ),
                 ),
             )
         assertThat(uri).isNotNull
@@ -78,11 +78,11 @@ class ProductServiceTest {
         assertThrows<DuplicateProductNameException> {
             adminProductService.createProduct(
                 ProductDTO(
-                    name = product.name,
-                    optionsList =
-                        mutableListOf(
-                            OptionDTO("Option 1", 15.0, 10, "https://example.com/test.png"),
-                        ),
+                    product.name,
+                    "http://localhost:8080/image/upload/product1.jpg",
+                    mutableListOf(
+                        OptionDTO("Option 1", 15.0, 10, "https://example.com/test.png"),
+                    ),
                 ),
             )
         }
@@ -94,11 +94,11 @@ class ProductServiceTest {
         adminProductService.updateProduct(
             product.id,
             ProductDTO(
-                name = "test",
-                optionsList =
-                    mutableListOf(
-                        OptionDTO("Option 1", 11.0, 11, "https://example.com/test.png"),
-                    ),
+                "test",
+                "http://localhost:8080/image/upload/product1.jpg",
+                mutableListOf(
+                    OptionDTO("Option 1", 11.0, 11, "https://example.com/test.png"),
+                ),
             ),
         )
         assertThat(productRepository.findById(product.id).orElse(null).options.first().price).isEqualTo(11.0)
@@ -110,11 +110,11 @@ class ProductServiceTest {
             adminProductService.updateProduct(
                 -3,
                 ProductDTO(
-                    name = "test",
-                    optionsList =
-                        mutableListOf(
-                            OptionDTO("Option 1", 11.0, 11, "https://example.com/test.png"),
-                        ),
+                    "test",
+                    "http://localhost:8080/image/upload/product1.jpg",
+                    mutableListOf(
+                        OptionDTO("Option 1", 11.0, 11, "https://example.com/test.png"),
+                    ),
                 ),
             )
         }
@@ -129,6 +129,7 @@ class ProductServiceTest {
                 product2.id,
                 ProductDTO(
                     product1.name,
+                    "http://localhost:8080/image/upload/product1.jpg",
                     mutableListOf(
                         OptionDTO("Option 1", 11.0, 11, "https://example.com/test.png"),
                     ),
@@ -142,7 +143,11 @@ class ProductServiceTest {
         val product = createProduct()
         adminProductService.patchProduct(
             product.id,
-            ProductPatchDTO("updated", mutableListOf(OptionDTO("Option 1", 10.0, 5, "https://example.com/test.png"))),
+            ProductPatchDTO(
+                "updated",
+                "http://localhost:8080/image/upload/product1.jpg",
+                mutableListOf(OptionPatchDTO()),
+            ),
         )
         val updatedProduct = productRepository.findById(product.id).orElse(null)
         assertThat(updatedProduct.name).isEqualTo("updated")
@@ -344,9 +349,8 @@ class ProductServiceTest {
     @ParameterizedTest
     @ValueSource(
         strings = [
-            "http://www.googleapis.com/oauth2/v1/",
+            "htt://www.googleapis.com/oauth2/v1/",
             "",
-            "http://localhost:8080/image/upload/product1.docs",
         ],
     )
     fun `throws invalid url error`(imageUrl: String) {
@@ -520,6 +524,7 @@ class ProductServiceTest {
         return productRepository.save(
             Product(
                 name,
+                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     Option(
                         "name",

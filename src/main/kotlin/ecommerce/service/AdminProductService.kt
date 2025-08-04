@@ -48,6 +48,7 @@ class AdminProductService(
             productRepository.save(
                 Product(
                     productDTO.name,
+                    productDTO.imageUrl,
                     getOptionMutableList(productDTO.optionsList),
                 ),
             )
@@ -85,10 +86,7 @@ class AdminProductService(
             existingProduct.name = newName
         }
 
-        productPatchDTO.optionsList?.let {
-            optionRepository.deleteAllById(existingProduct.options.map { it.id })
-            existingProduct.options = getOptionMutableList(productPatchDTO.optionsList)
-        }
+        productPatchDTO.imageUrl?.let { existingProduct.imageUrl = it }
     }
 
     fun deleteProduct(id: Long) {

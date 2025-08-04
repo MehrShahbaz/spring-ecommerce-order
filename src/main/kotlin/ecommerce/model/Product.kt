@@ -14,6 +14,8 @@ import java.time.LocalDateTime
 class Product(
     @Column(name = "name", nullable = false, unique = true)
     var name: String,
+    @Column(name = "image_url", nullable = false)
+    var imageUrl: String,
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "product_id")
     var options: MutableList<Option>,

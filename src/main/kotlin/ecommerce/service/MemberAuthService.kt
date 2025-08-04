@@ -33,9 +33,9 @@ class MemberAuthService(
                 UserRole.USER,
             )
 
-        member.cart = cartRepository.save(Cart())
-
         val savedMember = userRepository.save(member)
+
+        cartRepository.save(Cart(member))
 
         val authTokenPayload = jwtProvider.createToken(AuthTokenPayload(member.email))
         return UserCreateResponse(URI.create("/users/$savedMember.id"), "Bearer $authTokenPayload")

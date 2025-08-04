@@ -67,6 +67,7 @@ class AdminProductControllerTest {
         val actual =
             ProductDTO(
                 "test",
+                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
@@ -93,6 +94,7 @@ class AdminProductControllerTest {
         val product =
             ProductDTO(
                 "shouldFailTheTest",
+                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
@@ -119,6 +121,7 @@ class AdminProductControllerTest {
         val actual =
             ProductDTO(
                 "test",
+                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
@@ -174,6 +177,7 @@ class AdminProductControllerTest {
                 .body(
                     ProductDTO(
                         "Product2",
+                        "http://localhost:8080/image/upload/product1.jpg",
                         mutableListOf(
                             OptionDTO(
                                 "name",
@@ -323,6 +327,7 @@ class AdminProductControllerTest {
         return productRepository.save(
             Product(
                 name,
+                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     Option(
                         "name",

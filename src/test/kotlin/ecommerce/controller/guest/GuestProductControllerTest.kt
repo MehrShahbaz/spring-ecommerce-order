@@ -30,6 +30,7 @@ class GuestProductControllerTest {
             (0..20).map {
                 Product(
                     "name-$it",
+                    "http://localhost:8080/image/upload/product1.jpg",
                     mutableListOf(
                         Option(
                             "option-$it",

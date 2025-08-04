@@ -5,6 +5,7 @@ import ecommerce.dto.user.UserRequestDTO
 import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.repository.CartProductRepository
+import ecommerce.repository.CartRepository
 import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
@@ -22,6 +23,8 @@ import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class CartControllerTest {
+    @Autowired
+    private lateinit var cartRepository: CartRepository
     lateinit var token: String
     lateinit var product: Product
 
@@ -65,6 +68,7 @@ class CartControllerTest {
             productRepository.save(
                 Product(
                     "test",
+                    "http://localhost:8080/image/upload/product1.jpg",
                     options,
                 ),
             )
@@ -74,6 +78,7 @@ class CartControllerTest {
     fun afterInit() {
         cartStatisticRepository.deleteAll()
         cartProductRepository.deleteAll()
+        cartRepository.deleteAll()
         optionRepository.deleteAll()
         productRepository.deleteAll()
         userRepository.deleteAll()

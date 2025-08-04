@@ -25,6 +25,7 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 "Product-1",
+                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
@@ -45,6 +46,7 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name,
+                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
@@ -73,6 +75,7 @@ class ProductDTOTest {
         val dto =
             ProductDTO(
                 name,
+                "http://localhost:8080/image/upload/product1.jpg",
                 mutableListOf(
                     OptionDTO(
                         "name",
