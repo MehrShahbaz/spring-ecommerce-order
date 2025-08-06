@@ -32,6 +32,7 @@ class CartProduct(
     fun incrementQuantity(quantity: Int = 1) {
         this.quantity += quantity
     }
+
     fun decrementQuantity(quantity: Int = 1) {
         this.quantity -= quantity
     }

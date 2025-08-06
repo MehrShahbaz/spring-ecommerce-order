@@ -3,6 +3,7 @@ package ecommerce.model
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -16,7 +17,7 @@ class Product(
     var name: String,
     @Column(name = "image_url", nullable = false)
     var imageUrl: String,
-    @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "product_id")
     var options: MutableList<Option>,
     @Column(name = "created_at", nullable = false)

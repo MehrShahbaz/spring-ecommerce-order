@@ -4,7 +4,6 @@ import ecommerce.dto.cartProduct.CartProductDTO
 import ecommerce.dto.user.UserRequestDTO
 import ecommerce.model.Option
 import ecommerce.model.Product
-import ecommerce.repository.CartProductRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.OptionRepository
@@ -43,9 +42,6 @@ class CartControllerTest {
     @Autowired
     lateinit var cartStatisticRepository: CartStatisticRepository
 
-    @Autowired
-    lateinit var cartProductRepository: CartProductRepository
-
     @BeforeEach
     fun beforeInit() {
         token = memberAuthService.signUp(UserRequestDTO("user", "user.test@test.com", "hello123")).token
@@ -77,7 +73,6 @@ class CartControllerTest {
     @AfterEach
     fun afterInit() {
         cartStatisticRepository.deleteAll()
-        cartProductRepository.deleteAll()
         cartRepository.deleteAll()
         optionRepository.deleteAll()
         productRepository.deleteAll()
