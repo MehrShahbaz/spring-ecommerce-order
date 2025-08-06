@@ -1,5 +1,7 @@
 package ecommerce.model
 
+import ecommerce.dto.products.OptionDTO
+import ecommerce.dto.products.OptionPatchDTO
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -27,6 +29,20 @@ class Option(
         require(name.length <= NAME_MAX_LENGTH) { "name must be less than 50 characters" }
         require(name.matches(NAME_PATTERN)) { "name must match pattern" }
         require(imageUrl.matches(URL_PATTERN)) { "image URL must valid url" }
+    }
+
+    fun updateFields(optionDTO: OptionDTO) {
+        name = optionDTO.name
+        price = optionDTO.price
+        quantity = optionDTO.quantity
+        imageUrl = optionDTO.imageUrl
+    }
+
+    fun patchOption(optionPatchDTO: OptionPatchDTO) {
+        optionPatchDTO.name?.let { name = it }
+        optionPatchDTO.price?.let { price = it }
+        optionPatchDTO.quantity?.let { quantity = it }
+        optionPatchDTO.imageUrl?.let { imageUrl = it }
     }
 
     companion object {

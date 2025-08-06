@@ -124,10 +124,7 @@ class AdminProductService(
         val product = getValidProduct(productId)
         val option = findOption(product, optionId)
 
-        option.name = optionDTO.name
-        option.price = optionDTO.price
-        option.quantity = optionDTO.quantity
-        option.imageUrl = optionDTO.imageUrl
+        option.updateFields(optionDTO)
     }
 
     fun patchOption(
@@ -138,10 +135,7 @@ class AdminProductService(
         val product = getValidProduct(productId)
         val option = findOption(product, optionId)
 
-        optionPatchDTO.name?.let { option.name = it }
-        optionPatchDTO.price?.let { option.price = it }
-        optionPatchDTO.quantity?.let { option.quantity = it }
-        optionPatchDTO.imageUrl?.let { option.imageUrl = it }
+        option.patchOption(optionPatchDTO)
     }
 
     fun deleteOption(
