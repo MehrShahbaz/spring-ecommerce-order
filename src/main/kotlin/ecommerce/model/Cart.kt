@@ -9,25 +9,34 @@ import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
+import kotlin.collections.minusAssign
+import kotlin.collections.plusAssign
+import kotlin.compareTo
 
 @Entity
-class Cart(
+class Cart private constructor() {
     @OneToOne
     @JoinColumn(name = "user_id")
-    var user: User,
+    lateinit var user: User
+
     @OneToMany(mappedBy = "cart", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val items: MutableList<CartProduct> = mutableListOf(),
+    val items: MutableList<CartProduct> = mutableListOf()
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
-) {
+    val id: Long = 0L
+
+    constructor(user: User) : this() {
+        this.user = user
+    }
+
     fun addProduct(
         option: Option,
         quantity: Int = 1,
     ): CartProduct {
         val existing = findProduct(option)
         return if (existing != null) {
-            existing.quantity += quantity
+            existing.incrementQuantity(quantity)
             existing
         } else {
             val newItem = CartProduct(this, option, quantity)
@@ -46,7 +55,7 @@ class Cart(
             findProduct(option)
                 ?: throw EntityNotFoundException("Product option with id ${option.id} not found")
         if (existing.quantity > decrement) {
-            existing.quantity -= decrement
+            existing.decrementQuantity(decrement)
         } else {
             items.remove(existing)
         }

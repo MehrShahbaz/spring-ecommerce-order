@@ -28,4 +28,11 @@ class CartProduct(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
-)
+) {
+    fun incrementQuantity(quantity: Int = 1) {
+        this.quantity += quantity
+    }
+    fun decrementQuantity(quantity: Int = 1) {
+        this.quantity -= quantity
+    }
+}
