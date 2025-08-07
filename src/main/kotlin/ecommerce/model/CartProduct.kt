@@ -18,9 +18,6 @@ import jakarta.persistence.UniqueConstraint
 )
 class CartProduct(
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
-    var cart: Cart,
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "option_id", nullable = false)
     var option: Option,
     @Column(name = "quantity", nullable = false)

@@ -8,6 +8,7 @@ import ecommerce.model.CartProduct
 import ecommerce.model.CartStatistic
 import ecommerce.model.Option
 import ecommerce.model.User
+import ecommerce.repository.CartProductRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.OptionRepository
@@ -21,6 +22,7 @@ class CartService(
     private val cartStatisticRepository: CartStatisticRepository,
     private val optionRepository: OptionRepository,
     private val cartRepository: CartRepository,
+    private val cartProductRepository: CartProductRepository,
 ) {
     fun getCartProducts(member: User): CartProductResponse {
         val cart = getCart(member)
@@ -36,6 +38,7 @@ class CartService(
         val cart = getCart(member)
         val option = getValidProductOption(optionId)
         val addedItem = cart.addProduct(option)
+        cartProductRepository.save(addedItem)
 
         cartStatisticRepository.save(
             CartStatistic(
