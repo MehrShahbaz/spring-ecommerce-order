@@ -42,8 +42,12 @@ class CartService(
 
         cartStatisticRepository.save(
             CartStatistic(
-                member,
-                option,
+                member.id,
+                member.email,
+                member.name,
+                option.id,
+                option.name,
+                option.price,
                 CartAction.ADD,
             ),
         )
@@ -62,8 +66,12 @@ class CartService(
 
         cartStatisticRepository.save(
             CartStatistic(
-                member,
-                option,
+                member.id,
+                member.email,
+                member.name,
+                option.id,
+                option.name,
+                option.price,
                 CartAction.DELETE,
             ),
         )
@@ -79,8 +87,12 @@ class CartService(
         val stats =
             cart.items.map {
                 CartStatistic(
-                    member,
-                    it.option,
+                    member.id,
+                    member.email,
+                    member.name,
+                    it.option.id,
+                    it.option.name,
+                    it.option.price,
                     CartAction.DELETE,
                 )
             }

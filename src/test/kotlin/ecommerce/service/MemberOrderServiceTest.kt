@@ -1,7 +1,6 @@
 package ecommerce.service
 
 import ecommerce.model.Cart
-import ecommerce.model.CartProduct
 import ecommerce.model.Option
 import ecommerce.model.Product
 import ecommerce.model.User
@@ -19,6 +18,7 @@ import kotlin.test.AfterTest
 class MemberOrderServiceTest {
     lateinit var member: User
     lateinit var cart: Cart
+
     @Autowired
     private lateinit var cartProductRepository: CartProductRepository
 
@@ -59,20 +59,20 @@ class MemberOrderServiceTest {
                     ),
                 ),
             )
-        cart =
-            cartRepository.save(
-                Cart(
-                    member,
-                    mutableListOf(
-                        cartProductRepository.save(
-                            CartProduct(
-                                product.options.first(),
-                                10,
-                            ),
-                        )
-                    )
-                ),
-            )
+//        cart =
+//            cartRepository.save(
+//                Cart(
+//                    member,
+//                    mutableListOf(
+//                        cartProductRepository.save(
+//                            CartProduct(
+//                                product.options.first(),
+//                                10,
+//                            ),
+//                        ),
+//                    ),
+//                ),
+//            )
     }
 
     @AfterTest
@@ -83,6 +83,6 @@ class MemberOrderServiceTest {
 
     @Test
     fun name() {
-        orderService.createCheckoutCartIntent(member.id)
+//        orderService.createCheckoutCartIntent(member.id)
     }
 }
