@@ -10,32 +10,33 @@ class ProductTest {
             Product(
                 "name",
                 "http://example.com",
-                mutableListOf()
+                mutableListOf(),
             )
         }
     }
 
     @Test
     fun `options name is unique`() {
-        val options = mutableListOf(
-            Option(
-                "name",
-                10.0,
-                10,
-                "https://example.com"
-            ),
-            Option(
-                "name",
-                10.0,
-                10,
-                "https://example.com"
-            ),
-        )
+        val options =
+            mutableListOf(
+                Option(
+                    "name",
+                    10.0,
+                    10,
+                    "https://example.com",
+                ),
+                Option(
+                    "name",
+                    10.0,
+                    10,
+                    "https://example.com",
+                ),
+            )
         assertThrows<IllegalArgumentException> {
             Product(
                 "name",
                 "http://example.com",
-                options
+                options,
             )
         }
     }

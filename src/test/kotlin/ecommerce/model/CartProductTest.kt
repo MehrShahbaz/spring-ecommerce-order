@@ -4,12 +4,12 @@ import ecommerce.repository.CartProductRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.repository.UserRepository
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.assertj.core.api.Assertions.assertThat
 
 @SpringBootTest
 class CartProductTest {
@@ -47,7 +47,7 @@ class CartProductTest {
                     ),
                 ),
             ).options
-        cart.addProduct(options[0],10)
+        cart.addProduct(options[0], 10)
         cartProduct = cart.items.first()
     }
 
