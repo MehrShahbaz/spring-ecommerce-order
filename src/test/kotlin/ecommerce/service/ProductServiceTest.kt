@@ -40,13 +40,6 @@ class ProductServiceTest {
     }
 
     @Test
-    fun getAllProducts() {
-        createProduct()
-        val paginatedProducts = adminProductService.getAllProducts()
-        assertThat(paginatedProducts.content.size).isEqualTo(1)
-    }
-
-    @Test
     fun getProductById() {
         val product = createProduct()
         assertThat(adminProductService.getProductById(product.id)).isNotNull

@@ -1,7 +1,5 @@
 package ecommerce.service
 
-import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
-import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
 import ecommerce.dto.products.OptionDTO
 import ecommerce.dto.products.OptionPatchDTO
 import ecommerce.dto.products.ProductDTO
@@ -13,11 +11,9 @@ import ecommerce.repository.OptionRepository
 import ecommerce.repository.ProductRepository
 import ecommerce.utils.exception.DuplicateProductNameException
 import ecommerce.utils.exception.EntityNotFoundException
-import ecommerce.utils.extensions.getPaginatedDTOs
 import ecommerce.utils.extensions.toEntity
 import ecommerce.utils.extensions.toProductDTO
 import jakarta.transaction.Transactional
-import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 import java.net.URI
 
@@ -27,13 +23,6 @@ class AdminProductService(
     private val productRepository: ProductRepository,
     private val optionRepository: OptionRepository,
 ) {
-    fun getAllProducts(
-        page: Int = DEFAULT_PAGE,
-        perPage: Int = PER_PAGE,
-    ): Page<ProductResponseDTO> {
-        return productRepository.getPaginatedDTOs(page, perPage)
-    }
-
     fun getProductById(id: Long): ProductResponseDTO {
         val product = getValidProduct(id)
         return product.toProductDTO()

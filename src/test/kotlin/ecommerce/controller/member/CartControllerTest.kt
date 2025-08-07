@@ -4,6 +4,7 @@ import ecommerce.dto.cartProduct.CartProductDTO
 import ecommerce.dto.user.UserRequestDTO
 import ecommerce.model.Option
 import ecommerce.model.Product
+import ecommerce.repository.CartProductRepository
 import ecommerce.repository.CartRepository
 import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.OptionRepository
@@ -22,6 +23,9 @@ import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class CartControllerTest {
+    @Autowired
+    private lateinit var cartProductRepository: CartProductRepository
+
     @Autowired
     private lateinit var cartRepository: CartRepository
     lateinit var token: String
@@ -73,6 +77,7 @@ class CartControllerTest {
     @AfterEach
     fun afterInit() {
         cartStatisticRepository.deleteAll()
+        cartProductRepository.deleteAll()
         cartRepository.deleteAll()
         optionRepository.deleteAll()
         productRepository.deleteAll()

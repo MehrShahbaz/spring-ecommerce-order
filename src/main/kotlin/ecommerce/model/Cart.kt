@@ -1,7 +1,6 @@
 package ecommerce.model
 
 import ecommerce.utils.exception.EntityNotFoundException
-import jakarta.persistence.CascadeType
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
@@ -19,7 +18,8 @@ class Cart private constructor() {
     @JoinColumn(name = "user_id")
     lateinit var user: User
 
-    @OneToMany(mappedBy = "cart", cascade = [CascadeType.ALL], orphanRemoval = true)
+    @OneToMany
+    @JoinColumn(name = "cart_id")
     val items: MutableList<CartProduct> = mutableListOf()
 
     @Id
@@ -39,7 +39,7 @@ class Cart private constructor() {
             existing.incrementQuantity(quantity)
             existing
         } else {
-            val newItem = CartProduct(this, option, quantity)
+            val newItem = CartProduct(option, quantity)
             items.add(newItem)
             newItem
         }

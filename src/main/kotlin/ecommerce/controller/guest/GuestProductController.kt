@@ -3,7 +3,7 @@ package ecommerce.controller.guest
 import ecommerce.controller.admin.AdminProductController.Companion.DEFAULT_PAGE
 import ecommerce.controller.admin.AdminProductController.Companion.PER_PAGE
 import ecommerce.dto.products.ProductResponseDTO
-import ecommerce.service.GuestProductService
+import ecommerce.service.PaginatedProductsService
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api")
 class GuestProductController(
-    private val guestProductService: GuestProductService,
+    private val paginatedProductsService: PaginatedProductsService,
 ) {
     @GetMapping("/products")
     fun listProducts(
         @RequestParam(value = "page", defaultValue = DEFAULT_PAGE.toString()) page: Int,
         @RequestParam(value = "perPage", defaultValue = PER_PAGE.toString()) perPage: Int,
     ): ResponseEntity<Page<ProductResponseDTO>> {
-        val productListResponse = guestProductService.getListProducts(page, perPage)
+        val productListResponse = paginatedProductsService.getListProducts(page, perPage)
         return ResponseEntity.ok().body(productListResponse)
     }
 }
