@@ -5,11 +5,12 @@ import ecommerce.dto.order.OrderIntentResponse
 import ecommerce.dto.order.OrderProductResponse
 import ecommerce.dto.order.OrderResponse
 import ecommerce.dto.payment.PaymentRequest
+import ecommerce.dto.stripe.StripeResponse
 import ecommerce.enums.OrderStatus
 import ecommerce.enums.PaymentOption
 import ecommerce.infrastructure.StripeClient
 import ecommerce.model.MemberOrder
-import ecommerce.model.OrderProducts
+import ecommerce.model.OrderProduct
 import ecommerce.model.User
 import ecommerce.repository.MemberOrderRepository
 import ecommerce.repository.OptionRepository
@@ -45,16 +46,17 @@ class MemberOrderService(
         return OrderIntentResponse(paymentIntentId, order.id)
     }
 
-    fun confirmCheckout(orderId: Long) {
+    fun confirmCheckout(orderId: Long): StripeResponse? {
         val order = getOrder(orderId)
         val member = getUser(order.userId)
         if (order.status == OrderStatus.REJECTED) {
             order.incrementAttempt()
         }
-        try {
-            stripeClient.confirmPayment(order.paymentId)
-            cartService.clearCart(member)
+        return try {
+            val response = stripeClient.confirmPayment(order.paymentId)
+            cartService.checkoutCart(member)
             order.status = OrderStatus.COMPLETED
+            response
         } catch (e: StripeException) {
             order.status = OrderStatus.REJECTED
             throw StripeException(e.message)
@@ -69,9 +71,8 @@ class MemberOrderService(
         return orderRepository.save(
             MemberOrder(
                 cartProducts.map {
-                    OrderProducts(
+                    OrderProduct(
                         it.optionId,
-                        0L,
                         it.name,
                         it.price,
                         it.quantity,
@@ -93,7 +94,7 @@ class MemberOrderService(
 
     private fun createPaymentRequest(cartProducts: List<CartProductDTO>): PaymentRequest {
         return PaymentRequest(
-            calculateTotal(cartProducts).toInt(),
+            (calculateTotal(cartProducts) * 100).toInt().toString(),
         )
     }
 
@@ -122,7 +123,7 @@ class MemberOrderService(
         )
     }
 
-    private fun OrderProducts.toResponse(): OrderProductResponse {
+    private fun OrderProduct.toResponse(): OrderProductResponse {
         return OrderProductResponse(
             price,
             quantity,

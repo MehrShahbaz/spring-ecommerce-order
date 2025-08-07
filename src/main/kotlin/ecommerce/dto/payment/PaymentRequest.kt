@@ -1,7 +1,7 @@
 package ecommerce.dto.payment
 
 class PaymentRequest(
-    val amount: Int,
+    val amount: String,
     val currency: String = DEFAULT_CURRENCY,
     val paymentMethod: String = DEFAULT_PAYMENT_METHOD,
 ) {

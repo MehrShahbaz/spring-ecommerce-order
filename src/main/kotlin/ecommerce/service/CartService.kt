@@ -101,6 +101,12 @@ class CartService(
         cart.clear()
     }
 
+    fun checkoutCart(member: User) {
+        val cart = getCart(member)
+        cart.clear()
+        cartRepository.save(cart)
+    }
+
     private fun getCart(member: User): Cart {
         return cartRepository.findByUserIdOrUserNull(member.id)
             ?: throw EntityNotFoundException("Cart not found")

@@ -2,10 +2,12 @@ package ecommerce.model
 
 import ecommerce.enums.OrderStatus
 import ecommerce.enums.PaymentOption
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -15,9 +17,9 @@ import java.time.LocalDateTime
 
 @Entity
 class MemberOrder(
-    @OneToMany
-    @JoinColumn(name = "customer_order_id", nullable = false)
-    val optionProducts: List<OrderProducts> = listOf(),
+    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.EAGER, orphanRemoval = true)
+    @JoinColumn(name = "member_orders_id", nullable = false)
+    val optionProducts: List<OrderProduct> = listOf(),
     @Column(name = "user_id", nullable = false)
     var userId: Long,
     @Column(name = "user_email", nullable = false)

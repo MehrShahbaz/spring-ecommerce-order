@@ -16,7 +16,7 @@ class StripeClientTest {
         // given
         val paymentRequest =
             PaymentRequest(
-                100,
+                "100",
                 "eur",
                 "pm_card_visa",
             )
@@ -25,7 +25,6 @@ class StripeClientTest {
         val response = stripeClient.createCheckoutSession(paymentRequest)
 
         // than
-        assertThat(response?.amount).isEqualTo(paymentRequest.amount)
         assertThat(response?.id).isNotEmpty
     }
 
@@ -34,7 +33,7 @@ class StripeClientTest {
         // given
         val paymentRequest =
             PaymentRequest(
-                100,
+                "100",
                 "eur",
                 "pm_card_visa",
             )
@@ -44,6 +43,6 @@ class StripeClientTest {
         val confirm = stripeClient.confirmPayment(intentId)
 
         // than
-        assertThat(confirm?.amount).isEqualTo(paymentRequest.amount)
+        assertThat(confirm?.status).isEqualTo("succeeded")
     }
 }

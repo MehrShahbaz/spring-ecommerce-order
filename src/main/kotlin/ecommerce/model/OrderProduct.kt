@@ -7,11 +7,9 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 
 @Entity
-class OrderProducts(
+class OrderProduct(
     @Column(name = "option_id")
     var optionId: Long,
-    @Column(name = "product_id")
-    var productId: Long,
     @Column(name = "option_name")
     var optionName: String,
     @Column(name = "price", nullable = false)
