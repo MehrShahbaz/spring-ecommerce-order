@@ -7,6 +7,7 @@ import ecommerce.dto.products.ProductPatchDTO
 import ecommerce.dto.products.ProductResponseDTO
 import ecommerce.dto.response.MessageResponse
 import ecommerce.service.AdminProductService
+import ecommerce.service.PaginatedProductsService
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.http.ResponseEntity
@@ -23,13 +24,16 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/admin/products")
-class AdminProductController(private val adminProductService: AdminProductService) {
+class AdminProductController(
+    private val adminProductService: AdminProductService,
+    private val paginatedProductsService: PaginatedProductsService,
+) {
     @GetMapping("")
     fun getProducts(
         @RequestParam(value = "page", defaultValue = DEFAULT_PAGE.toString()) page: Int,
         @RequestParam(value = "perPage", defaultValue = PER_PAGE.toString()) perPage: Int,
     ): ResponseEntity<Page<ProductResponseDTO>> {
-        val productListResponse = adminProductService.getAllProducts(page, perPage)
+        val productListResponse = paginatedProductsService.getListProducts(page, perPage)
         return ResponseEntity.ok().body(productListResponse)
     }
 
