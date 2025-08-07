@@ -23,7 +23,7 @@ class StripeClient(
                 "amount=${req.amount}",
                 "currency=${req.currency}",
                 "payment_method=${req.paymentMethod}",
-                "confirm=true",
+                "confirm=false",
                 "automatic_payment_methods[enabled]=true",
                 "automatic_payment_methods[allow_redirects]=never",
             ).joinToString("&")
@@ -40,7 +40,22 @@ class StripeClient(
 
             response.body
         } catch (e: RestClientException) {
+            throw StripeException(e.message)
+        }
+    }
 
+    fun confirmPayment(intentId: String): StripeResponse? {
+        return try {
+            val response =
+                restClient.post()
+                    .uri("https://api.stripe.com/v1/payment_intents/$intentId/confirm")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer $stripeKey")
+                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .retrieve()
+                    .toEntity(StripeResponse::class.java)
+
+            response.body
+        } catch (e: RestClientException) {
             throw StripeException(e.message)
         }
     }
