@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 
 @Entity
 class MemberOrder(
-    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "member_orders_id", nullable = false)
     val optionProducts: List<OrderProduct> = listOf(),
     @Column(name = "user_id", nullable = false)

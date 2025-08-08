@@ -20,7 +20,7 @@ class Cart private constructor() {
     @JoinColumn(name = "user_id")
     lateinit var user: User
 
-    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "cart_id")
     val items: MutableList<CartProduct> = mutableListOf()
 

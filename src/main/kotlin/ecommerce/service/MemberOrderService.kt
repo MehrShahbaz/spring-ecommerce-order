@@ -18,8 +18,10 @@ import ecommerce.repository.UserRepository
 import ecommerce.utils.exception.EntityNotFoundException
 import ecommerce.utils.exception.StripeException
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class MemberOrderService(
     val orderRepository: MemberOrderRepository,
     val optionRepository: OptionRepository,
