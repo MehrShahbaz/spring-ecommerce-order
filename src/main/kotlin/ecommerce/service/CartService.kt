@@ -3,6 +3,7 @@ package ecommerce.service
 import ecommerce.dto.cartProduct.CartProductDTO
 import ecommerce.dto.cartProduct.CartProductResponse
 import ecommerce.enums.CartAction
+import ecommerce.infrastructure.ApplicationLogger
 import ecommerce.model.Cart
 import ecommerce.model.CartProduct
 import ecommerce.model.Option
@@ -21,6 +22,7 @@ class CartService(
     private val cartRepository: CartRepository,
     private val cartProductRepository: CartProductRepository,
     private val adminStatisticsService: AdminStatisticsService,
+    private val applicationLogger: ApplicationLogger,
 ) {
     fun getCartProducts(member: User): CartProductResponse {
         val cart = getCart(member)
@@ -38,9 +40,21 @@ class CartService(
         val addedItem = cart.addProduct(option)
         cartProductRepository.save(addedItem)
 
-        adminStatisticsService.createStatistic(member, option, CartAction.ADD)
+        recordStatistic(member, option, CartAction.ADD)
 
         return addedItem.id
+    }
+
+    private fun recordStatistic(
+        member: User,
+        option: Option,
+        action: CartAction,
+    ) {
+        try {
+            adminStatisticsService.createStatistic(member, option, action)
+        } catch (e: Exception) {
+            applicationLogger.logError("${e.message}")
+        }
     }
 
     fun removeProductFromCart(
@@ -52,7 +66,7 @@ class CartService(
 
         cart.decrementProduct(option)
 
-        adminStatisticsService.createStatistic(member, option, CartAction.DELETE)
+        recordStatistic(member, option, CartAction.DELETE)
     }
 
     fun clearCart(member: User) {
@@ -63,7 +77,7 @@ class CartService(
         }
 
         cart.items.forEach {
-            adminStatisticsService.createStatistic(member, it.option, CartAction.DELETE)
+            recordStatistic(member, it.option, CartAction.DELETE)
         }
         cart.clear()
     }
