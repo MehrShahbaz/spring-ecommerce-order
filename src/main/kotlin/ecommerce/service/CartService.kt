@@ -5,12 +5,10 @@ import ecommerce.dto.cartProduct.CartProductResponse
 import ecommerce.enums.CartAction
 import ecommerce.model.Cart
 import ecommerce.model.CartProduct
-import ecommerce.model.CartStatistic
 import ecommerce.model.Option
 import ecommerce.model.User
 import ecommerce.repository.CartProductRepository
 import ecommerce.repository.CartRepository
-import ecommerce.repository.CartStatisticRepository
 import ecommerce.repository.OptionRepository
 import ecommerce.utils.exception.EntityNotFoundException
 import org.springframework.stereotype.Service
@@ -19,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class CartService(
-    private val cartStatisticRepository: CartStatisticRepository,
     private val optionRepository: OptionRepository,
     private val cartRepository: CartRepository,
     private val cartProductRepository: CartProductRepository,
+    private val adminStatisticsService: AdminStatisticsService,
 ) {
     fun getCartProducts(member: User): CartProductResponse {
         val cart = getCart(member)
@@ -40,17 +38,7 @@ class CartService(
         val addedItem = cart.addProduct(option)
         cartProductRepository.save(addedItem)
 
-        cartStatisticRepository.save(
-            CartStatistic(
-                member.id,
-                member.email,
-                member.name,
-                option.id,
-                option.name,
-                option.price,
-                CartAction.ADD,
-            ),
-        )
+        adminStatisticsService.createStatistic(member, option, CartAction.ADD)
 
         return addedItem.id
     }
@@ -64,17 +52,7 @@ class CartService(
 
         cart.decrementProduct(option)
 
-        cartStatisticRepository.save(
-            CartStatistic(
-                member.id,
-                member.email,
-                member.name,
-                option.id,
-                option.name,
-                option.price,
-                CartAction.DELETE,
-            ),
-        )
+        adminStatisticsService.createStatistic(member, option, CartAction.DELETE)
     }
 
     fun clearCart(member: User) {
@@ -84,20 +62,9 @@ class CartService(
             throw EntityNotFoundException("No items found")
         }
 
-        val stats =
-            cart.items.map {
-                CartStatistic(
-                    member.id,
-                    member.email,
-                    member.name,
-                    it.option.id,
-                    it.option.name,
-                    it.option.price,
-                    CartAction.DELETE,
-                )
-            }
-
-        cartStatisticRepository.saveAll(stats)
+        cart.items.forEach {
+            adminStatisticsService.createStatistic(member, it.option, CartAction.DELETE)
+        }
         cart.clear()
     }
 
