@@ -1,8 +1,16 @@
 package ecommerce.controller.member
 
+import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.order.OrderResponse
 import ecommerce.dto.user.UserRequestDTO
+import ecommerce.model.Cart
+import ecommerce.model.CartProduct
+import ecommerce.model.Option
+import ecommerce.model.Product
+import ecommerce.model.User
+import ecommerce.repository.CartProductRepository
 import ecommerce.repository.CartRepository
+import ecommerce.repository.ProductRepository
 import ecommerce.repository.UserRepository
 import ecommerce.service.MemberAuthService
 import io.restassured.RestAssured
@@ -28,14 +36,48 @@ class MemberOrderControllerTest {
     @Autowired
     private lateinit var cartRepository: CartRepository
 
+    @Autowired
+    private lateinit var cartProductRepository: CartProductRepository
+
+    @Autowired
+    private lateinit var productRepository: ProductRepository
+
     @BeforeEach
     fun beforeInit() {
-        token = memberAuthService.signUp(UserRequestDTO("user", "user.test@test.com", "hello123")).token
+        val member =
+            userRepository.save(
+                User(
+                    "order@test.com",
+                    "123456789",
+                    "test",
+                ),
+            )
+        val option =
+            productRepository.save(
+                Product(
+                    "orderName",
+                    "http://localhost:8080/image/upload/product1.jpg",
+                    mutableListOf(
+                        Option(
+                            "name",
+                            10.1,
+                            51,
+                            "http://localhost:8080/image/upload/product1.jpg",
+                        ),
+                    ),
+                ),
+            ).options.first()
+        val cart = cartRepository.save(Cart(member))
+        cart.items.add(cartProductRepository.save(CartProduct(option, 10)))
+        cartRepository.save(cart)
+        token = memberAuthService.login(LoginRequest(member.email, member.password))
     }
 
     @AfterEach
     fun afterInit() {
+        cartProductRepository.deleteAll()
         cartRepository.deleteAll()
+        productRepository.deleteAll()
         userRepository.deleteAll()
     }
 
@@ -54,15 +96,45 @@ class MemberOrderControllerTest {
     }
 
     @Test
-    fun getOrderById() {
+    fun `createCheckoutCartIntent & getOrderById`() {
+        val intentResponse = RestAssured
+            .given().log().all()
+            .header("Authorization", token)
+            .contentType(ContentType.JSON)
+            .`when`().post("/api/member/order/cart-checkout")
+            .then().log().all().extract()
+
+        val orderId = intentResponse.body().jsonPath().getLong("orderId")
         val response =
             RestAssured
                 .given().log().all()
                 .header("Authorization", token)
                 .contentType(ContentType.JSON)
-                .`when`().get("/api/member/order/-1")
+                .`when`().get("/api/member/order/$orderId")
                 .then().log().all().extract()
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value())
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+    }
+
+    @Test
+    fun confirmCheckout() {
+        val intentResponse = RestAssured
+            .given().log().all()
+            .header("Authorization", token)
+            .contentType(ContentType.JSON)
+            .`when`().post("/api/member/order/cart-checkout")
+            .then().log().all().extract()
+
+        val orderId = intentResponse.body().jsonPath().getLong("orderId")
+        val response =
+            RestAssured
+                .given().log().all()
+                .header("Authorization", token)
+                .contentType(ContentType.JSON)
+                .`when`().post("/api/member/order/confirm-checkout/$orderId")
+                .then().log().all().extract()
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+        assertThat(response.body().jsonPath().getString("message")).isEqualTo("Order confirmed")
     }
 }
