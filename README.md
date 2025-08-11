@@ -287,6 +287,10 @@
 - [x] User  => email = "user@test.com" | pw = "user123"
 - [x] 10x Products
 
+## Deployment
+- [x] Used Docker for deployment
+- [x] http://52.78.119.87
+
 ## Environment Variables
 
 To run the application, create a `.env` file in the root directory based on the provided `.env.sample` file.
