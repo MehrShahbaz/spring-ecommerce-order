@@ -47,19 +47,3 @@ jobs:
       # Push Docker image
       - name: Push Docker image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/shahbaz-image:1.0
-
-      # Copy SSH key for EC2
-      - name: Prepare SSH key
-        run: |
-          echo "${{ secrets.EC2_KEY }}" > ec2_key.pem
-          chmod 600 ec2_key.pem
-
-      # Deploy to EC2
-      - name: SSH into EC2 and restart container
-        run: |
-          ssh -o StrictHostKeyChecking=no -i ec2_key.pem ${{ secrets.EC2_HOST }} << 'EOF'
-          docker pull ${{ secrets.DOCKER_USERNAME }}/shahbaz-image:1.0
-          docker stop springboot-container || true
-          docker rm springboot-container || true
-          docker run -d --name springboot-container -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/shahbaz-image:1.0
-          EOF
