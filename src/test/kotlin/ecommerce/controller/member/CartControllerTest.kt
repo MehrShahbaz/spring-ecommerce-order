@@ -1,5 +1,6 @@
 package ecommerce.controller.member
 
+import ecommerce.controller.BaseApiTest
 import ecommerce.dto.cartProduct.CartProductDto
 import ecommerce.dto.user.UserRequestDTO
 import ecommerce.model.Option
@@ -22,7 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class CartControllerTest {
+class CartControllerTest : BaseApiTest() {
     @Autowired
     private lateinit var cartProductRepository: CartProductRepository
 

@@ -282,6 +282,11 @@
 - [x] MemberOrderServiceTest
 - [x] ProductServiceTest
 
+## Dummy Data
+- [x] Admin => email = "admin@test.com" | pw = "admin123"
+- [x] User  => email = "user@test.com" | pw = "user123"
+- [x] 10x Products
+
 ## Environment Variables
 
 To run the application, create a `.env` file in the root directory based on the provided `.env.sample` file.

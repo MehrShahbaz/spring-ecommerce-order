@@ -1,5 +1,6 @@
 package ecommerce.controller.member
 
+import ecommerce.controller.BaseApiTest
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.order.OrderResponse
 import ecommerce.model.Cart
@@ -23,7 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class MemberOrderControllerTest {
+class MemberOrderControllerTest : BaseApiTest() {
     private lateinit var token: String
 
     @Autowired

@@ -30,7 +30,7 @@ class CartProductTest {
 
     @BeforeEach
     fun initBeforeEachTest() {
-        val member = userRepository.save(User("user@test.com", "user1234", "user"))
+        val member = userRepository.save(User("user@testing.com", "user1234", "user"))
         val cart = cartRepository.save(Cart(member))
         options =
             productRepository.save(
