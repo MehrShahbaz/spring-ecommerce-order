@@ -73,7 +73,9 @@ class CartService(
     fun checkoutCart(member: User) {
         val cart = getCart(member)
         cart.items.forEach {
-            it.option.decrementQuantity(it.quantity)
+            optionRepository.findById(it.option.id).orElseThrow {
+                EntityNotFoundException("No items found")
+            }.decrementQuantity(it.quantity)
         }
         cart.clear()
         cartRepository.save(cart)

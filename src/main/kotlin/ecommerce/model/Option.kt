@@ -46,7 +46,7 @@ class Option(
     }
 
     fun decrementQuantity(count: Int = 1) {
-        if (count < quantity) {
+        if (quantity < count) {
             throw IllegalArgumentException("quantity must be positive and greater than $quantity")
         }
         quantity -= count
