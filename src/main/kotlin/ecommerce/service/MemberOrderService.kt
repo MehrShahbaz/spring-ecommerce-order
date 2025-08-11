@@ -83,12 +83,12 @@ class MemberOrderService(
 
     private fun createOrder(
         user: User,
-        cartProductDtos: List<CartProductDto>,
+        cartProductDto: List<CartProductDto>,
         paymentId: String,
     ): MemberOrder {
         return orderRepository.save(
             MemberOrder(
-                cartProductDtos.map {
+                cartProductDto.map {
                     OrderProduct(
                         it.optionId,
                         it.name,
@@ -100,7 +100,7 @@ class MemberOrderService(
                 user.email,
                 paymentId,
                 PaymentOption.STRIPE,
-                calculateTotal(cartProductDtos),
+                calculateTotal(cartProductDto),
                 OrderStatus.PENDING,
             ),
         )
