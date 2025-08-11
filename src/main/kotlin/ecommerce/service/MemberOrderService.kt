@@ -1,6 +1,6 @@
 package ecommerce.service
 
-import ecommerce.dto.cartProduct.CartProductDTO
+import ecommerce.dto.cartProduct.CartProductDto
 import ecommerce.dto.order.OrderIntentResponse
 import ecommerce.dto.order.OrderProductResponse
 import ecommerce.dto.order.OrderResponse
@@ -67,12 +67,12 @@ class MemberOrderService(
 
     private fun createOrder(
         user: User,
-        cartProducts: List<CartProductDTO>,
+        cartProductDtos: List<CartProductDto>,
         paymentId: String,
     ): MemberOrder {
         return orderRepository.save(
             MemberOrder(
-                cartProducts.map {
+                cartProductDtos.map {
                     OrderProduct(
                         it.optionId,
                         it.name,
@@ -84,19 +84,19 @@ class MemberOrderService(
                 user.email,
                 paymentId,
                 PaymentOption.STRIPE,
-                calculateTotal(cartProducts),
+                calculateTotal(cartProductDtos),
                 OrderStatus.PENDING,
             ),
         )
     }
 
-    private fun calculateTotal(cartProducts: List<CartProductDTO>): Double {
-        return cartProducts.sumOf { it.price * it.quantity }
+    private fun calculateTotal(cartProductDtos: List<CartProductDto>): Double {
+        return cartProductDtos.sumOf { it.price * it.quantity }
     }
 
-    private fun createPaymentRequest(cartProducts: List<CartProductDTO>): PaymentRequest {
+    private fun createPaymentRequest(cartProductDtos: List<CartProductDto>): PaymentRequest {
         return PaymentRequest(
-            (calculateTotal(cartProducts) * 100).toInt().toString(),
+            (calculateTotal(cartProductDtos) * 100).toInt().toString(),
         )
     }
 
@@ -104,7 +104,7 @@ class MemberOrderService(
         return orderRepository.findById(orderId).orElseThrow { throw EntityNotFoundException("Order with id $orderId not found") }
     }
 
-    private fun getCartProducts(member: User): List<CartProductDTO> {
+    private fun getCartProducts(member: User): List<CartProductDto> {
         return cartService.getCartProducts(member).products.takeIf { it.isNotEmpty() }
             ?: throw EntityNotFoundException("No products found")
     }

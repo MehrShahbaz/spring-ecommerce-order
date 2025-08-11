@@ -1,6 +1,6 @@
 package ecommerce.service
 
-import ecommerce.dto.cartProduct.CartProductDTO
+import ecommerce.dto.cartProduct.CartProductDto
 import ecommerce.dto.cartProduct.CartProductResponse
 import ecommerce.enums.CartAction
 import ecommerce.infrastructure.ApplicationLogger
@@ -98,8 +98,8 @@ class CartService(
             .orElseThrow { EntityNotFoundException("Product option not found") }
     }
 
-    private fun CartProduct.toDTO(): CartProductDTO {
-        return CartProductDTO(
+    private fun CartProduct.toDTO(): CartProductDto {
+        return CartProductDto(
             option.id,
             option.name,
             option.price,
