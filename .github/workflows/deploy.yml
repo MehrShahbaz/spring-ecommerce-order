@@ -3,7 +3,7 @@ name: Build and Deploy Spring Boot App
 on:
   push:
     branches:
-      - step2
+      - step2  # Only trigger on pushes to the step2 branch
 
 jobs:
   build-deploy:
@@ -20,6 +20,14 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+
+      # Cache Gradle wrapper distributions
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/wrapper/dists
+          key: gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-wrapper-
 
       # Build JAR using Gradle
       - name: Build JAR

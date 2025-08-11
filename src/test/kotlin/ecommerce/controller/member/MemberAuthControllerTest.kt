@@ -39,14 +39,13 @@ class MemberAuthControllerTest : BaseApiTest() {
 
     @Test
     fun login() {
-        val user =
-            userRepository.save(
-                User(
-                    "temp2@temp.com",
-                    "test-456",
-                    "test",
-                ),
-            )
+        userRepository.save(
+            User(
+                "temp2@temp.com",
+                "test-456",
+                "test",
+            ),
+        )
         val loginRequest =
             LoginRequest(
                 "temp2@temp.com",
