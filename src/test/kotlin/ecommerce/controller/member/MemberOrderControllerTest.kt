@@ -2,7 +2,6 @@ package ecommerce.controller.member
 
 import ecommerce.dto.auth.LoginRequest
 import ecommerce.dto.order.OrderResponse
-import ecommerce.dto.user.UserRequestDTO
 import ecommerce.model.Cart
 import ecommerce.model.CartProduct
 import ecommerce.model.Option
@@ -97,12 +96,13 @@ class MemberOrderControllerTest {
 
     @Test
     fun `createCheckoutCartIntent & getOrderById`() {
-        val intentResponse = RestAssured
-            .given().log().all()
-            .header("Authorization", token)
-            .contentType(ContentType.JSON)
-            .`when`().post("/api/member/order/cart-checkout")
-            .then().log().all().extract()
+        val intentResponse =
+            RestAssured
+                .given().log().all()
+                .header("Authorization", token)
+                .contentType(ContentType.JSON)
+                .`when`().post("/api/member/order/cart-checkout")
+                .then().log().all().extract()
 
         val orderId = intentResponse.body().jsonPath().getLong("orderId")
         val response =
@@ -118,12 +118,13 @@ class MemberOrderControllerTest {
 
     @Test
     fun confirmCheckout() {
-        val intentResponse = RestAssured
-            .given().log().all()
-            .header("Authorization", token)
-            .contentType(ContentType.JSON)
-            .`when`().post("/api/member/order/cart-checkout")
-            .then().log().all().extract()
+        val intentResponse =
+            RestAssured
+                .given().log().all()
+                .header("Authorization", token)
+                .contentType(ContentType.JSON)
+                .`when`().post("/api/member/order/cart-checkout")
+                .then().log().all().extract()
 
         val orderId = intentResponse.body().jsonPath().getLong("orderId")
         val response =
