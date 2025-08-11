@@ -45,18 +45,6 @@ class CartService(
         return addedItem.id
     }
 
-    private fun recordStatistic(
-        member: User,
-        option: Option,
-        action: CartAction,
-    ) {
-        try {
-            adminStatisticsService.createStatistic(member, option, action)
-        } catch (e: Exception) {
-            applicationLogger.logError("${e.message}")
-        }
-    }
-
     fun removeProductFromCart(
         member: User,
         optionId: Long,
@@ -86,6 +74,18 @@ class CartService(
         val cart = getCart(member)
         cart.clear()
         cartRepository.save(cart)
+    }
+
+    private fun recordStatistic(
+        member: User,
+        option: Option,
+        action: CartAction,
+    ) {
+        try {
+            adminStatisticsService.createStatistic(member, option, action)
+        } catch (e: Exception) {
+            applicationLogger.logError("${e.message}")
+        }
     }
 
     private fun getCart(member: User): Cart {
