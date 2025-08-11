@@ -45,6 +45,13 @@ class Option(
         optionPatchDTO.imageUrl?.let { imageUrl = it }
     }
 
+    fun decrementQuantity(count: Int = 1) {
+        if (count < quantity) {
+            throw IllegalArgumentException("quantity must be positive and greater than $quantity")
+        }
+        quantity -= count
+    }
+
     companion object {
         private const val NAME_MAX_LENGTH = 50
         private const val MIN_PRICE = 0.01

@@ -72,6 +72,9 @@ class CartService(
 
     fun checkoutCart(member: User) {
         val cart = getCart(member)
+        cart.items.forEach {
+            it.option.decrementQuantity(it.quantity)
+        }
         cart.clear()
         cartRepository.save(cart)
     }

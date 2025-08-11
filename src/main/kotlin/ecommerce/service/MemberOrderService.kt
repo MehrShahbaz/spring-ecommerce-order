@@ -16,6 +16,7 @@ import ecommerce.repository.MemberOrderRepository
 import ecommerce.repository.OptionRepository
 import ecommerce.repository.UserRepository
 import ecommerce.utils.exception.EntityNotFoundException
+import ecommerce.utils.exception.LowStockException
 import ecommerce.utils.exception.StripeException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -42,6 +43,7 @@ class MemberOrderService(
     fun createCheckoutCartIntent(userId: Long): OrderIntentResponse {
         val member = getUser(userId)
         val cartProducts = getCartProducts(member)
+        checkCartProducts(cartProducts)
         val paymentRequest = createPaymentRequest(cartProducts)
         val paymentIntentId = stripeClient.createCheckoutSession(paymentRequest)!!.id
         val order = createOrder(member, cartProducts, paymentIntentId)
@@ -51,6 +53,8 @@ class MemberOrderService(
     fun confirmCheckout(orderId: Long): StripeResponse? {
         val order = getOrder(orderId)
         val member = getUser(order.userId)
+        val cartProducts = getCartProducts(member)
+        checkCartProducts(cartProducts)
         if (order.status == OrderStatus.REJECTED) {
             order.incrementAttempt()
         }
@@ -62,6 +66,18 @@ class MemberOrderService(
         } catch (e: StripeException) {
             order.status = OrderStatus.REJECTED
             throw StripeException(e.message)
+        }
+    }
+
+    private fun checkCartProducts(cartProducts: List<CartProductDto>) {
+        cartProducts.forEach {
+            val option =
+                optionRepository.findById(it.optionId).orElseThrow {
+                    throw EntityNotFoundException("Option with id ${it.optionId} not found")
+                }
+            if (option.quantity < it.quantity) {
+                throw LowStockException("Option with id ${it.optionId} is low on stock")
+            }
         }
     }
 
