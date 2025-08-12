@@ -5,9 +5,10 @@ import ecommerce.dto.payment.PaymentRequest
 import ecommerce.dto.stripe.StripeResponse
 import ecommerce.utils.exception.StripeException
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
+import org.springframework.web.client.HttpClientErrorException
+import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
 
@@ -30,16 +31,17 @@ class StripeClient(
             val response =
                 stripeRestClient.post()
                     .uri("https://api.stripe.com/v1/payment_intents")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer $stripeKey")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .headers { headers ->
+                        headers.setBearerAuth(stripeKey)
+                        headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
+                    }
                     .body(body)
                     .retrieve()
                     .toEntity(StripeResponse::class.java)
 
             response.body
         } catch (e: RestClientException) {
-            applicationLogger.logError(e.message)
-            throw StripeException(e.message)
+            throw handleError(e)
         }
     }
 
@@ -57,8 +59,26 @@ class StripeClient(
 
             response.body
         } catch (e: RestClientException) {
-            applicationLogger.logError(e.message)
-            throw StripeException(e.message)
+            throw handleError(e)
+        }
+    }
+
+    private fun handleError(e: RestClientException): StripeException {
+        applicationLogger.logError("Error from Stripe API: ${e.message}")
+        when (e) {
+            is HttpClientErrorException.BadRequest -> {
+                val errorBody = e.responseBodyAsString
+                return StripeException("Invalid request: $errorBody")
+            }
+            is HttpClientErrorException.Unauthorized -> {
+                return StripeException("Authentication failed: invalid Stripe key error: ${e.message}")
+            }
+            is HttpServerErrorException -> {
+                return StripeException("Stripe service is unavailable error: ${e.message}")
+            }
+            else -> {
+                return StripeException("An unexpected error occurred with the Stripe API error: ${e.message}")
+            }
         }
     }
 }
