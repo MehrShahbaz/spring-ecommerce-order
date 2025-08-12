@@ -49,8 +49,10 @@ class StripeClient(
             val response =
                 restClient.post()
                     .uri("https://api.stripe.com/v1/payment_intents/$intentId/confirm")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer $stripeKey")
-                    .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                    .headers { headers ->
+                        headers.setBearerAuth(stripeKey)
+                        headers.contentType = MediaType.APPLICATION_FORM_URLENCODED
+                    }
                     .retrieve()
                     .toEntity(StripeResponse::class.java)
 
