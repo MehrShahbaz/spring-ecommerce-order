@@ -50,6 +50,8 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("jakarta.validation:jakarta.validation-api:3.0.2")
     testImplementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+    testImplementation("org.mockito:mockito-core:5.5.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
 }
 
 kotlin {
