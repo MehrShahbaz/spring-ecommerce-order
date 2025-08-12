@@ -1,5 +1,6 @@
 package ecommerce.infrastructure
 
+import ecommerce.dto.payment.PaymentBody
 import ecommerce.dto.payment.PaymentRequest
 import ecommerce.dto.stripe.StripeResponse
 import ecommerce.utils.exception.StripeException
@@ -18,15 +19,11 @@ class StripeClient(
     private val restClient = RestClient.create()
 
     fun createCheckoutSession(req: PaymentRequest): StripeResponse? {
-        val body =
-            listOf(
-                "amount=${req.amount}",
-                "currency=${req.currency}",
-                "payment_method=${req.paymentMethod}",
-                "confirm=false",
-                "automatic_payment_methods[enabled]=true",
-                "automatic_payment_methods[allow_redirects]=never",
-            ).joinToString("&")
+        val body = PaymentBody(
+            req.amount,
+            req.currency,
+            req.paymentMethod
+        ).toString()
 
         return try {
             val response =
