@@ -15,7 +15,8 @@ import org.springframework.web.client.RestClientException
 class StripeClient(
     @Value("\${stripe.secret-key}")
     private val stripeKey: String,
-    private val stripeRestClient: RestClient
+    private val stripeRestClient: RestClient,
+    private val applicationLogger: ApplicationLogger
 ) {
     fun createCheckoutSession(req: PaymentRequest): StripeResponse? {
         val body = PaymentBody(
@@ -36,6 +37,7 @@ class StripeClient(
 
             response.body
         } catch (e: RestClientException) {
+            applicationLogger.logError(e.message)
             throw StripeException(e.message)
         }
     }
@@ -54,6 +56,7 @@ class StripeClient(
 
             response.body
         } catch (e: RestClientException) {
+            applicationLogger.logError(e.message)
             throw StripeException(e.message)
         }
     }

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class ApplicationLogger {
     val log: Logger = LoggerFactory.getLogger(ApplicationLogger::class.java)
 
-    fun logError(message: String) {
+    fun logError(message: String?) {
         log.error(message)
     }
 }
