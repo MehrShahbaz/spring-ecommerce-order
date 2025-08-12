@@ -45,4 +45,8 @@ class MemberOrder(
     fun incrementAttempt() {
         attempt++
     }
+
+    fun changeStatus(status: OrderStatus) {
+        this.status = status
+    }
 }

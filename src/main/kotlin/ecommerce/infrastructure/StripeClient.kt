@@ -16,14 +16,15 @@ class StripeClient(
     @Value("\${stripe.secret-key}")
     private val stripeKey: String,
     private val stripeRestClient: RestClient,
-    private val applicationLogger: ApplicationLogger
+    private val applicationLogger: ApplicationLogger,
 ) {
     fun createCheckoutSession(req: PaymentRequest): StripeResponse? {
-        val body = PaymentBody(
-            req.amount,
-            req.currency,
-            req.paymentMethod
-        ).toString()
+        val body =
+            PaymentBody(
+                req.amount,
+                req.currency,
+                req.paymentMethod,
+            ).toString()
 
         return try {
             val response =

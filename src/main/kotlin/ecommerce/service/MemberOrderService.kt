@@ -7,37 +7,34 @@ import ecommerce.dto.order.OrderResponse
 import ecommerce.dto.payment.PaymentRequest
 import ecommerce.dto.stripe.StripeResponse
 import ecommerce.enums.OrderStatus
-import ecommerce.enums.PaymentOption
 import ecommerce.infrastructure.StripeClient
 import ecommerce.model.MemberOrder
 import ecommerce.model.OrderProduct
 import ecommerce.model.User
-import ecommerce.repository.MemberOrderRepository
 import ecommerce.repository.OptionRepository
 import ecommerce.repository.UserRepository
 import ecommerce.utils.exception.EntityNotFoundException
 import ecommerce.utils.exception.LowStockException
 import ecommerce.utils.exception.StripeException
+import ecommerce.utils.helper.OrderUtil
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
 class MemberOrderService(
-    val orderRepository: MemberOrderRepository,
+    val orderService: OrderService,
     val optionRepository: OptionRepository,
     val cartService: CartService,
     val stripeClient: StripeClient,
-    private val userRepository: UserRepository,
+    val userRepository: UserRepository,
 ) {
     fun getUserOrders(userId: Long): List<OrderResponse> {
-        return orderRepository.findAllByUserId(userId).map { it.toOrderResponse() }
+        return orderService.getUserOrders(userId).map { it.toOrderResponse() }
     }
 
+    @Transactional(readOnly = true)
     fun getOrderById(orderId: Long): OrderResponse {
-        return orderRepository.findById(orderId).orElseThrow {
-            throw EntityNotFoundException("Order with id $orderId not found")
-        }.toOrderResponse()
+        return orderService.getOrderById(orderId).toOrderResponse()
     }
 
     fun createCheckoutCartIntent(userId: Long): OrderIntentResponse {
@@ -46,12 +43,12 @@ class MemberOrderService(
         checkCartProducts(cartProducts)
         val paymentRequest = createPaymentRequest(cartProducts)
         val paymentIntentId = stripeClient.createCheckoutSession(paymentRequest)!!.id
-        val order = createOrder(member, cartProducts, paymentIntentId)
+        val order = orderService.createOrder(member, cartProducts, paymentIntentId)
         return OrderIntentResponse(paymentIntentId, order.id)
     }
 
     fun confirmCheckout(orderId: Long): StripeResponse? {
-        val order = getOrder(orderId)
+        val order = orderService.getOrderById(orderId)
         val member = getUser(order.userId)
         val cartProducts = getCartProducts(member)
         checkCartProducts(cartProducts)
@@ -61,10 +58,10 @@ class MemberOrderService(
         return try {
             val response = stripeClient.confirmPayment(order.paymentId)
             cartService.checkoutCart(member)
-            order.status = OrderStatus.COMPLETED
+            order.changeStatus(OrderStatus.COMPLETED)
             response
         } catch (e: StripeException) {
-            order.status = OrderStatus.REJECTED
+            order.changeStatus(OrderStatus.REJECTED)
             throw StripeException(e.message)
         }
     }
@@ -81,43 +78,10 @@ class MemberOrderService(
         }
     }
 
-    private fun createOrder(
-        user: User,
-        cartProductDto: List<CartProductDto>,
-        paymentId: String,
-    ): MemberOrder {
-        return orderRepository.save(
-            MemberOrder(
-                cartProductDto.map {
-                    OrderProduct(
-                        it.optionId,
-                        it.name,
-                        it.price,
-                        it.quantity,
-                    )
-                },
-                user.id,
-                user.email,
-                paymentId,
-                PaymentOption.STRIPE,
-                calculateTotal(cartProductDto),
-                OrderStatus.PENDING,
-            ),
-        )
-    }
-
-    private fun calculateTotal(cartProductDtos: List<CartProductDto>): Double {
-        return cartProductDtos.sumOf { it.price * it.quantity }
-    }
-
-    private fun createPaymentRequest(cartProductDtos: List<CartProductDto>): PaymentRequest {
+    private fun createPaymentRequest(cartProductDto: List<CartProductDto>): PaymentRequest {
         return PaymentRequest(
-            (calculateTotal(cartProductDtos) * 100).toInt().toString(),
+            (OrderUtil.calculateTotal(cartProductDto) * 100).toInt().toString(),
         )
-    }
-
-    private fun getOrder(orderId: Long): MemberOrder {
-        return orderRepository.findById(orderId).orElseThrow { throw EntityNotFoundException("Order with id $orderId not found") }
     }
 
     private fun getCartProducts(member: User): List<CartProductDto> {

@@ -9,10 +9,11 @@ import org.springframework.web.client.RestClient
 class RestClientConfig {
     @Bean
     fun stripeRestClient(): RestClient {
-        val factory = SimpleClientHttpRequestFactory().apply {
-            setConnectTimeout(CONNECTION_TIMEOUT)
-            setReadTimeout(READ_TIMEOUT)
-        }
+        val factory =
+            SimpleClientHttpRequestFactory().apply {
+                setConnectTimeout(CONNECTION_TIMEOUT)
+                setReadTimeout(READ_TIMEOUT)
+            }
 
         return RestClient.builder()
             .requestFactory(factory)
