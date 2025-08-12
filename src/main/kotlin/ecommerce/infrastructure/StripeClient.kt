@@ -15,9 +15,8 @@ import org.springframework.web.client.RestClientException
 class StripeClient(
     @Value("\${stripe.secret-key}")
     private val stripeKey: String,
+    private val stripeRestClient: RestClient
 ) {
-    private val restClient = RestClient.create()
-
     fun createCheckoutSession(req: PaymentRequest): StripeResponse? {
         val body = PaymentBody(
             req.amount,
@@ -27,7 +26,7 @@ class StripeClient(
 
         return try {
             val response =
-                restClient.post()
+                stripeRestClient.post()
                     .uri("https://api.stripe.com/v1/payment_intents")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer $stripeKey")
                     .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -44,7 +43,7 @@ class StripeClient(
     fun confirmPayment(intentId: String): StripeResponse? {
         return try {
             val response =
-                restClient.post()
+                stripeRestClient.post()
                     .uri("https://api.stripe.com/v1/payment_intents/$intentId/confirm")
                     .headers { headers ->
                         headers.setBearerAuth(stripeKey)
