@@ -17,8 +17,9 @@ class StripeClient(
     @Value("\${stripe.secret-key}")
     private val stripeKey: String,
     private val stripeRestClient: RestClient,
-    private val applicationLogger: ApplicationLogger,
 ) {
+    private val logger = ApplicationLogger()
+
     fun createCheckoutSession(req: PaymentRequest): StripeResponse? {
         val body =
             PaymentBody(
@@ -64,7 +65,7 @@ class StripeClient(
     }
 
     private fun handleError(e: RestClientException): StripeException {
-        applicationLogger.logError("Error from Stripe API: ${e.message}")
+        logger.logError("Error from Stripe API: ${e.message}")
         when (e) {
             is HttpClientErrorException.BadRequest -> {
                 val errorBody = e.responseBodyAsString

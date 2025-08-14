@@ -22,8 +22,9 @@ class CartService(
     private val cartRepository: CartRepository,
     private val cartProductRepository: CartProductRepository,
     private val adminStatisticsService: AdminStatisticsService,
-    private val applicationLogger: ApplicationLogger,
 ) {
+    val logger = ApplicationLogger()
+
     fun getCartProducts(member: User): CartProductResponse {
         val cart = getCart(member)
         return CartProductResponse(
@@ -89,7 +90,7 @@ class CartService(
         try {
             adminStatisticsService.createStatistic(member, option, action)
         } catch (e: Exception) {
-            applicationLogger.logError("${e.message}")
+            logger.logError("${e.message}")
         }
     }
 
