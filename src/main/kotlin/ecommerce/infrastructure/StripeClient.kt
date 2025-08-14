@@ -1,5 +1,6 @@
 package ecommerce.infrastructure
 
+import com.stripe.exception.CardException
 import ecommerce.dto.payment.PaymentBody
 import ecommerce.dto.payment.PaymentRequest
 import ecommerce.dto.stripe.StripeResponse
@@ -11,7 +12,6 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
-import javax.smartcardio.CardException
 
 @Component
 class StripeClient(
