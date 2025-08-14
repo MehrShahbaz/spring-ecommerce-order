@@ -11,6 +11,7 @@ import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpServerErrorException
 import org.springframework.web.client.RestClient
 import org.springframework.web.client.RestClientException
+import javax.smartcardio.CardException
 
 @Component
 class StripeClient(
@@ -59,14 +60,17 @@ class StripeClient(
                     .toEntity(StripeResponse::class.java)
 
             response.body
-        } catch (e: RestClientException) {
+        } catch (e: Exception) {
             throw handleError(e)
         }
     }
 
-    private fun handleError(e: RestClientException): StripeException {
+    private fun handleError(e: Exception): StripeException {
         logger.logError("Error from Stripe API: ${e.message}")
         when (e) {
+            is CardException -> {
+                return StripeException("Invalid request: ${e.message}")
+            }
             is HttpClientErrorException.BadRequest -> {
                 val errorBody = e.responseBodyAsString
                 return StripeException("Invalid request: $errorBody")
